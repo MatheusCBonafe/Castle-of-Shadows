@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import com.acidbliss.entities.Entity;
 import com.acidbliss.entities.Player;
 import com.acidbliss.graphics.Spritesheet;
+import com.acidbliss.world.World;
 
 public class Game extends Canvas implements Runnable, KeyListener {
 	
@@ -34,15 +35,18 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	private BufferedImage image;
 	
 	public List<Entity> entities;
-	public Spritesheet spritesheet;
+	public static Spritesheet spritesheet;
 	
 	private Player player;
+	public static World world;
 	
 	public Game() {
 		addKeyListener(this);
 		
 		setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		initFrame();
+
+		world = new World("/map.png");
 		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		entities = new ArrayList<Entity>();
@@ -53,7 +57,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	}
 		
 	public void initFrame() {
-		frame = new JFrame("COMP");
+		frame = new JFrame("Castle of Shadows");
 		frame.add(this);
 		frame.setResizable(false);
 		frame.pack();
@@ -99,10 +103,8 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		g.setColor(new Color(255, 255, 255));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		
-		/*Rendering Game Sprites*/
-		//Graphics2D g2 = (Graphics2D) g;
-		
-		/*Rest In Pepperoni sprites*/
+		/*Rendering Game Sprites		
+		Rest In Pepperoni sprites*/
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
 			e.render(g);
@@ -165,19 +167,15 @@ public class Game extends Canvas implements Runnable, KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_RIGHT ||
-				e.getKeyCode() == KeyEvent.VK_D) {
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
 				player.right = false;
-		} else if(e.getKeyCode() == KeyEvent.VK_LEFT || 
-			e.getKeyCode() == KeyEvent.VK_A) {
+		} else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
 				player.left = false;
 		}
-		if (e.getKeyCode() == KeyEvent.VK_UP || 
-				e.getKeyCode() == KeyEvent.VK_W) {
+		if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
 				player.up = false;
 		}
-		else if (e.getKeyCode() == KeyEvent.VK_DOWN || 
-					e.getKeyCode() == KeyEvent.VK_S) {
+		else if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
 				player.down = false;
 		}		
 	}
