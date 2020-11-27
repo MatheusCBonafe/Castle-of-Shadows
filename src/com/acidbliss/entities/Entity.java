@@ -1,9 +1,12 @@
 package com.acidbliss.entities;
 
+//import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import com.acidbliss.main.Game;
+import com.acidbliss.world.Camera;
 
 public class Entity {
 
@@ -11,11 +14,12 @@ public class Entity {
 	protected double y;
 	protected int width;
 	protected int height;
+	private int maskx, masky, mwidth, mheight;
 	protected BufferedImage sprite;
-	public static BufferedImage POTION_EN = Game.spritesheet.getSprite(6*16, 0, 16, 16);
-	public static BufferedImage WEAPON_EN = Game.spritesheet.getSprite(7*16, 0, 16, 16);
-	public static BufferedImage AMMO_EN = Game.spritesheet.getSprite(6*16, 16, 16, 16);
-	public static BufferedImage ENEMY_EN = Game.spritesheet.getSprite(7*16, 16, 16, 16);
+	public static BufferedImage POTION_EN = Game.spritesheet.getSprite(96, 0, 16, 16);
+	public static BufferedImage WEAPON_EN = Game.spritesheet.getSprite(112, 0, 16, 16);
+	public static BufferedImage AMMO_EN = Game.spritesheet.getSprite(96, 16, 16, 16);
+	public static BufferedImage ENEMY_EN = Game.spritesheet.getSprite(112, 16, 16, 16);
 	
 	public Entity(double x, double y, int width, int height, BufferedImage sprite) {
 		this.x = x;
@@ -23,6 +27,18 @@ public class Entity {
 		this.width = width;
 		this.height = height;
 		this.sprite = sprite;
+		
+		this.maskx = 0;
+		this.masky = 0;
+		this.mwidth = width;
+		this.mheight = height;
+	}
+	
+	public void setMask(int maskx, int masky, int mwidth, int mheight) {
+		this.maskx = maskx;
+		this.masky = masky;
+		this.mwidth = mwidth;
+		this.mheight = mheight;
 	}
 	
 	public void setX (int newX) {
@@ -46,11 +62,23 @@ public class Entity {
 		return this.height;
 	}
 	
-	public void render(Graphics g) {
-		g.drawImage(sprite, this.getX(), this.getY(), null);
-	}
+	
 	
 	public void tick() {
+		
+	}
+	
+	public static boolean isColliding(Entity e1, Entity e2) {
+		Rectangle e1Mask = new Rectangle(e1.getX() + e1.maskx, e1.getY()+e1.masky, e1.mwidth, e1.mheight);
+		Rectangle e2Mask = new Rectangle(e2.getX() + e2.maskx, e2.getY()+e2.masky, e2.mwidth, e2.mheight);
+			
+		return e1Mask.intersects(e2Mask);
+	}
+	
+	public void render(Graphics g) {
+		g.drawImage(sprite, this.getX() - Camera.x, this.getY() - Camera.y, null);
+		//g.setColor(Color.red);
+		//g.fillRect(this.getX() + maskx - Camera.x, this.getY() + masky - Camera.y, mwidth, mheight);
 		
 	}
 }

@@ -11,12 +11,15 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JFrame;
 
+import com.acidbliss.entities.Enemy;
 import com.acidbliss.entities.Entity;
 import com.acidbliss.entities.Player;
 import com.acidbliss.graphics.Spritesheet;
+import com.acidbliss.graphics.UI;
 import com.acidbliss.world.World;
 
 public class Game extends Canvas implements Runnable, KeyListener {
@@ -28,27 +31,32 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	public static JFrame frame;
 	private Thread thread;
 	private boolean isRunning = true;
-	private final int WIDTH = 320;
-	private final int HEIGHT = 240;
-	private final int SCALE = 2;
+	public static final int WIDTH = 240;
+	public static final int HEIGHT = 160;
+	private final int SCALE = 3;
 	
 	private BufferedImage image;
 	
 	public static List<Entity> entities;
+	public static List<Enemy> enemies;
 	public static Spritesheet spritesheet;
 	
 	public static Player player;
+	public static Random rand;
 	public static World world;
+	public static UI ui;
 	
 	public Game() {
+		rand = new Random();
 		addKeyListener(this);
 		
 		setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		initFrame();
 
-		
+		ui = new UI();
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		entities = new ArrayList<Entity>();
+		enemies = new ArrayList<Enemy>();
 		spritesheet = new Spritesheet("/spritesheet.png");
 		player = new Player(0, 0, 16, 16, spritesheet.getSprite(32, 0, 16 , 16));
 		entities.add(player);
@@ -99,7 +107,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 			return;
 		}
 		Graphics g = image.getGraphics();
-		g.setColor(new Color(255, 255, 255));
+		g.setColor(new Color(0, 0, 0));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		
 		world.render(g);
@@ -110,6 +118,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 			Entity e = entities.get(i);
 			e.render(g);
 		}
+		ui.render(g);
 		g.dispose();
 		g = bs.getDrawGraphics();
 		g.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
@@ -124,7 +133,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		double delta = 0;
 		int frames = 0;
 		double timer = System.currentTimeMillis();
-		
+		requestFocus();
 		while(isRunning) {
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;
